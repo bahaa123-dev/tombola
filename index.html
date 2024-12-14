@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giveaway Number Selection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); /* Flexible for all screen sizes */
+            gap: 10px;
+            justify-content: center;
+            max-width: 600px; /* Limit grid width for large screens */
+            margin: auto; /* Center the grid */
+        }
+
+        .number-button {
+            width: 50px;
+            height: 50px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .number-button:hover {
+            background-color: #d4edda;
+        }
+
+        .number-button.disabled {
+            background-color: #ffcccc;
+            cursor: not-allowed;
+        }
+
+        /* Ensure buttons look consistent on mobile (iPhone) */
+        button {
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        /* For very small screens, reduce grid gaps */
+        @media (max-width: 400px) {
+            .grid {
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Giveaway: Choose Your Number</h1>
+    <p>Select a number below. Once chosen, it cannot be selected again.</p>
+    <div class="grid" id="numberGrid">
+        <!-- Buttons will be dynamically generated here -->
+    </div>
+
+    <script>
+        const totalNumbers = 42; // Total numbers available
+        const grid = document.getElementById('numberGrid');
+        const chosenNumbersKey = 'chosenNumbers'; // Key for local storage
+
+        // Load previously chosen numbers from local storage
+        const chosenNumbers = JSON.parse(localStorage.getItem(chosenNumbersKey)) || [];
+
+        // Function to save chosen numbers to local storage
+        function saveChosenNumbers() {
+            localStorage.setItem(chosenNumbersKey, JSON.stringify(chosenNumbers));
+        }
+
+        // Function to create the buttons dynamically
+        for (let i = 1; i <= totalNumbers; i++) {
+            const button = document.createElement('button');
+            button.innerText = i;
+            button.classList.add('number-button');
+            button.id = `button-${i}`;
+
+            // Check if this number was already chosen
+            if (chosenNumbers.includes(i)) {
+                button.classList.add('disabled');
+                button.innerText = 'Taken';
+                button.disabled = true;
+            }
+
+            // Add click event
+            button.addEventListener('click', () => {
+                if (!button.classList.contains('disabled')) {
+                    button.classList.add('disabled');
+                    button.innerText = 'Taken';
+                    button.disabled = true;
+
+                    // Save this number as chosen
+                    chosenNumbers.push(i);
+                    saveChosenNumbers();
+
+                    alert(`You selected number: ${i}`);
+                }
+            });
+
+            grid.appendChild(button);
+        }
+    </script>
+</body>
+</html>
